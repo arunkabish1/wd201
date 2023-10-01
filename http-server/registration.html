@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Registration Form</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(135deg, #f9920e, #09a7b0);
+    }
+    .small-form {
+      max-width: 400px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+
+<body class="text-center">
+  <form id="user-form" class="my-10 small-form">
+    <div class="border-2 border-red-550 rounded-lg p-5 mx-auto bg-white bg-opacity-90">
+      <h1 class="text-black-100 text-3xl font-bold mb-5">Registeration Form</h1>
+      <div class="grid grid-cols-1 gap-3">
+        <label class="text-left font-mono" for="name">Name:</label>
+        <input required type="text" id="name" name="name" class="w-50 border-2 border-red-550 p-2 rounded-lg">
+        <label class="text-left font-mono" for="email">Email:</label>
+        <input required type="email" id="email" name="email" class="w-50 border-2 border-red-550 p-2 rounded-lg">
+
+        <label class="text-left font-mono" for="password">Password:</label>
+        <input required type="password" id="password" name="password" class="w-50 border-2 border-red-550 p-2 rounded-lg">
+
+        <label class="text-left font-mono" for="dob">Date of Birth:</label>
+        <input type="date" id="dob" name="dob" class="w-50 border-2 border-red-550 p-2 rounded-lg">
+
+        <div class="flex items-center mt-6">
+          <input type="checkbox" name="acceptTerms" id="acceptTerms" class="mr-3">
+          <label for="acceptTerms" class="text-left">Accept Terms and Conditions.</label>
+        </div>
+
+        <button required type="submit"
+          class="mt-5 w-50 bg-gradient-to-r from-orange-550 to-green-450 text-black p-2 rounded-lg shadow-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-400">Submit</button>
+      </div>
+    </div>
+  </form>
+
+  <div class="border-2 border-blue-500 relative bg-white px-4 mt-5 pt-10 pb-8 shadow-xl ring-1 ring-gray-900/5 sm:mx-auto sm:rounded-lg sm:px-10">
+    <div class="mx-auto">
+      <h2 class="text-xl text-center font-bold leading-right">Entries</h2>
+      <div class="divide-y divide-gray-300/50" id="user-entries"></div>
+    </div>
+  </div>
+
+  <script>
+    const userForm = document.getElementById("user-form");
+const userEntries = retrieveEntries();
+const details = document.getElementById("user-entries");
+
+
+function retrieveEntries() {
+  return JSON.parse(localStorage.getItem("UserEntries") || "[]");
+}
+
+function displayEntries() {
+  const tableEntries = userEntries
+    .map(({ name, email, password, dob, acceptTerms }) => `
+      <tr>
+        <td class="border px-4 py-2">${name}</td>
+        <td class="border px-4 py-2">${email}</td>
+        <td class="border px-4 py-2">${password}</td>
+        <td class="border px-4 py-2">${dob}</td>
+        <td class="border px-4 py-2">${acceptTerms}</td>
+      </tr>
+    `)
+    .join("\n");
+  const table = `
+    <table class="table-auto w-full">
+      <thead>
+        <tr>
+          <th class="px-4 py-2">Name</th>
+          <th class="px-4 py-2">Email</th>
+          <th class="px-4 py-2">Password</th>
+          <th class="px-4 py-2">Dob</th>
+          <th class="px-4 py-2">Accepted terms?</th>
+        </tr>
+        </thead>
+        <tbody>
+          ${tableEntries}
+        </tbody>
+      </table>
+    `;
+  
+    details.innerHTML = table;
+  }
+  
+  function saveUserForm(event) {
+    event.preventDefault();
+  
+    const name = document.getElementById("name").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const dob = document.getElementById("dob").value;
+    const acceptTerms = document.getElementById("acceptTerms").checked;
+  
+    const currentYear = new Date().getFullYear();
+    const birthYear = dob.split("-");
+    const year = birthYear[0];
+    const age = currentYear - year;
+  
+  
+    if (age < 18 || age > 55) {
+      document.getElementById("dob").style.border = "1px solid red";
+      return alert("You must be between 18 and 55 years old to register");
+    }
+  
+    document.getElementById("dob").style.border = "none";
+  
+    const entry = { name, email, password, dob, acceptTerms };
+    userEntries.push(entry);
+  
+    localStorage.setItem("UserEntries", JSON.stringify(userEntries));
+    displayEntries();
+    userForm.reset();
+  }
+  
+  userForm.addEventListener("submit", saveUserForm);
+  displayEntries();
+  </script>
+</body>
+
+</html>
