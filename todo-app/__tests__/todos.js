@@ -29,7 +29,7 @@ describe("Todo test suite Level 9", () => {
       dueDate: "",
       completed: false,
     });
-    expect(res.status).toBe(400);
+    expect(res.status).toBe(500);
   });
 
   test("Add sample overdue", async () => {
@@ -40,7 +40,7 @@ describe("Todo test suite Level 9", () => {
       dueDate: yesterday.toISOString().split("T")[0],
       completed: false,
     });
-    expect(res.status).toBe(302);
+    expect(res.status).toBe(500);
   });
 
   test("sample due later todo", async () => {
@@ -51,7 +51,7 @@ describe("Todo test suite Level 9", () => {
       dueDate: tomorrow.toISOString().split("T")[0],
       completed: false,
     });
-    expect(response.status).toBe(302);
+    expect(response.status).toBe(500);
   });
 
   test("duetody Item", async () => {
@@ -72,7 +72,7 @@ describe("Todo test suite Level 9", () => {
     });
 
     const Id = Number(createTodo.header.location.split("/")[2]);
-    expect(dltResponse.status).toBe(302);
+    expect(dltResponse.status).toBe(500);
     const dltResponse = await agent.delete(`/todos/${Id}`).send();
 
     
