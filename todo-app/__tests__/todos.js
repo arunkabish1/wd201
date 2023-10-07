@@ -4,12 +4,14 @@ const app = require("../app");
 var cheerio = require("cheerio");
 
 let server, agent;
+
 function extractCsrfToken(res) {
   var $ = cheerio.load(res.text);
   return $("[name=_csrf]").val();
 }
 
-describe("Todo Applications", function () {
+describe("l9 test suite", function () {
+
   beforeAll(async () => {
     await db.sequelize.sync({ force: true });
     server = app.listen(3000, () => {});
@@ -28,7 +30,7 @@ describe("Todo Applications", function () {
     const res = await agent.get("/");
     const csrfToken = extractCsrfToken(res);
     const response = await agent.post("/todos").send({
-      title: "pays rent",
+      title: "payrent",
       dueDate: new Date().toISOString(),
       completed: false,
       _csrf: csrfToken,
@@ -36,19 +38,17 @@ describe("Todo Applications", function () {
     expect(response.statusCode).toBe(302);
   });
 
-  test("Marks todo as complete", async () => {
+  test("Marks as completed", async () => {
     let res = await agent.get("/");
     let csrfToken = extractCsrfToken(res);
     await agent.post("/todos").send({
-      title: "Buy milk",
+      title: "payrent",
       dueDate: new Date().toISOString(),
       completed: false,
       _csrf: csrfToken,
     });
 
-    const groupedTodosResponse = await agent
-      .get("/")
-      .set("Accept", "application/json");
+    const groupedTodosResponse = await agent.get("/").set("Accept", "application/json");
     const parsedGroupedResponse = JSON.parse(groupedTodosResponse.text);
     const dueTodayCount = parsedGroupedResponse.dueToday.length;
     const latestTodo = parsedGroupedResponse.dueToday[dueTodayCount - 1];
@@ -66,7 +66,7 @@ describe("Todo Applications", function () {
     expect(parsedUpdateResponse.completed).toBe(true);
   });
 
-  test("Deletes a todo  given ID", async () => {
+  test("Deletes a todo with ID", async () => {
     let res = await agent.get("/");
     let csrfToken = extractCsrfToken(res);
     await agent.post("/todos").send({
@@ -81,7 +81,6 @@ describe("Todo Applications", function () {
     const todaysTodos = parsedTodos.dueToday.length;
     const todo = parsedTodos.dueToday[todaysTodos - 1];
     const todoID = todo.id;
-
     res = await agent.get("/");
     csrfToken = extractCsrfToken(res);
 

@@ -10,44 +10,41 @@
     <link href="./css/styles.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-      const token = document.querySelector("meta[name='csrf-token']").getAttribute("content")
-      const updateTodo = (id) => {
-      const bool = document.querySelector(`#checkbox-${id}`).checked
-      console.log(bool);
-      fetch(`/todos/${id}`, {
-        method: "PUT",
-        headers: {
-        "Content-Type": "application/json",
-        },
-        body : JSON.stringify({
-        _csrf : token,
-        completed : bool
+      var token = document
+        .querySelector('meta[name="csrf-token"]')
+        .getAttribute("content");
+      function updateTodo(id) {
+        var boolean = document.querySelector(`#todo-checkbox-${id}`).checked;
+        fetch(`/todos/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            completed: boolean,
+            _csrf: token,
+          }),
         })
-      })
-      .then((res) => {
-        if (res.ok) {
-          window.location.reload();
-        }
-      })
-      .catch(err);{
-      console.log(err);
+          .then((res) => {
+            if (res.ok) {
+              window.location.reload();
+            }
+          })
+          .catch((err) => console.error(err));
       }
-    };
-        function deleteTodo(id) {
-    fetch(`/todos/${id}`,{
-      method: "delete",
-      headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({
-        "_csrf":token
-      })
-    })
-     .then((res) => {
-      if (res.ok) {
-        window.location.reload();
+      function deleteTodo(id) {
+        fetch(`/todos/${id}`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            _csrf: token,
+          }),
+        })
+          .then((res) => {
+            if (res.ok) {
+              window.location.reload();
+            }
+          })
+          .catch((err) => console.log(err));
       }
-     })
-     .catch((err) => console.erroe(err));
-  }
     </script>
 </head>
 <body>
@@ -58,10 +55,10 @@
       <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <div class="flex gap-2 py-4">
             <div class="flex-auto">
-                <input type="text" name="title" placeholder="what's next" class="border border-gray-300 rounded text-gray-900 w-full p-2 text-sm" required />
+                <input type="text" name="title" placeholder="what's next..?" class="border border-purple-300 rounded text-gray-900 w-full p-2 text-sm" required />
             </div>
         <div class="flex-auto">
-            <input type="date" name="dueDate" class="border border-gray-300 rounded text-gray-900 w-full p-2 text-sm leading-4 " />
+            <input type="date" name="dueDate" required class="border border-gray-300 rounded text-gray-900 w-full p-2 text-sm leading-4 " />
         </div>
         <div class="flex-none">
             <button type="submit" class="bg-green-600 text-white px-5 py-1.5 rounded font-medium mr-2 mb-2">Add</button>
