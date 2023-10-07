@@ -4,7 +4,7 @@ const app = express();
 const bodyParser = require("body-parser");
 var cookieParser = require("cookie-parser");
 const path = require("path");
-//const { Todo } = require("./models");
+const { Todo } = require("./models");
 
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: false }));
