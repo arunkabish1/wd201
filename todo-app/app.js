@@ -46,6 +46,16 @@ app.put("/todos/:id", async (request, response) => {
   }
 });
 
+app.delete("/todos/:id", async (request, response) => {
+    console.log("delete Todo with ID: ", request.params.id);
+    try {
+      await Todo.remove(request.params.id);
+      return response.json({ success: true });
+    } catch (error) {
+      return response.status(422).json(error);
+    }
+});
+  
 app.post("/todos", async function (request, response) {
     console.log("Create a todo", request.body);
     try {
@@ -59,15 +69,5 @@ app.post("/todos", async function (request, response) {
       return response.status(422).json(error);
     }
   });
-  
-app.delete("/todos/:id", async (request, response) => {
-  console.log("delete Todo with ID: ", request.params.id);
-  try {
-    await Todo.remove(request.params.id);
-    return response.json({ success: true });
-  } catch (error) {
-    return response.status(422).json(error);
-  }
-});
 
 module.exports = app;

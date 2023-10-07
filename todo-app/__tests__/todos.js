@@ -9,7 +9,7 @@ function extractCsrfToken(res) {
   return $("[name=_csrf]").val();
 }
 
-describe("Todo Application", function () {
+describe("Todo Applications", function () {
   beforeAll(async () => {
     await db.sequelize.sync({ force: true });
     server = app.listen(3000, () => {});
@@ -24,11 +24,11 @@ describe("Todo Application", function () {
     }
   });
 
-  test("Creating a new Todo", async () => {
+  test("Creating Todo", async () => {
     const res = await agent.get("/");
     const csrfToken = extractCsrfToken(res);
     const response = await agent.post("/todos").send({
-      title: "Buy milk",
+      title: "pays rent",
       dueDate: new Date().toISOString(),
       completed: false,
       _csrf: csrfToken,
@@ -36,7 +36,7 @@ describe("Todo Application", function () {
     expect(response.statusCode).toBe(302);
   });
 
-  test("Marks a todo as complete", async () => {
+  test("Marks todo as complete", async () => {
     let res = await agent.get("/");
     let csrfToken = extractCsrfToken(res);
     await agent.post("/todos").send({
@@ -66,7 +66,7 @@ describe("Todo Application", function () {
     expect(parsedUpdateResponse.completed).toBe(true);
   });
 
-  test("Deletes a todo with the given ID if it exits and sends a boolean response", async () => {
+  test("Deletes a todo  given ID", async () => {
     let res = await agent.get("/");
     let csrfToken = extractCsrfToken(res);
     await agent.post("/todos").send({
