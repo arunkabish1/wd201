@@ -45,7 +45,7 @@ return response.status(422).json(error);
 app.post("/todos",async(request,response)=>{
 console.log("creating new todo",request.body);
 try{
-await Todo.addTodo({title:request.body.title,dueDate:request.body.dueDate,commpleted:false});
+await Todo.addTodo({title:request.body.title,dueDate:request.body.dueDate,completed:false});
 return response.redirect("/");
 }catch(error){
 console.log(error);

@@ -10,15 +10,15 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     markAsCompleted() {
-      return this.update({ completed: true });
+      return this.update({completed:true});
     }
 
     deletetodo() {
-      return this.update({ completed: true });
+      return this.update({completed:true});
     }
 
     static getTodos() {
-      return this.findAll({ order: [["id", "ASC"]] });
+      return this.findAll();
     }
 
     static overdue() {
@@ -69,13 +69,13 @@ module.exports = (sequelize, DataTypes) => {
     static async remove(id) {
       return this.destroy({
         where: {
-          id,
+          id
         },
       });
     }
 
     setCompletionStatus(bool) {
-      return this.update({ completed: bool });
+      return this.update({completed:bool});
     }
   }
 
