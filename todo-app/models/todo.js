@@ -3,26 +3,24 @@ const { Model, Op } = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
   class Todo extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-    static associate(models) {
-      // define association here
-    }
+    static associate(models) {}
+
     static addTodo({ title, dueDate }) {
       return this.create({ title: title, dueDate: dueDate, completed: false });
     }
+
     markAsCompleted() {
       return this.update({ completed: true });
     }
-    deleteTodo() {
-      return this.removetask(id);
+
+    deletetodo() {
+      return this.update({ completed: true });
     }
+
     static getTodos() {
       return this.findAll({ order: [["id", "ASC"]] });
     }
+
     static overdue() {
       return this.findAll({
         where: {
@@ -34,6 +32,7 @@ module.exports = (sequelize, DataTypes) => {
         order: [["id", "ASC"]],
       });
     }
+
     static dueToday() {
       return this.findAll({
         where: {
@@ -45,6 +44,7 @@ module.exports = (sequelize, DataTypes) => {
         order: [["id", "ASC"]],
       });
     }
+
     static dueLater() {
       return this.findAll({
         where: {
@@ -56,6 +56,7 @@ module.exports = (sequelize, DataTypes) => {
         order: [["id", "ASC"]],
       });
     }
+
     static completedItems() {
       return this.findAll({
         where: {
@@ -64,6 +65,7 @@ module.exports = (sequelize, DataTypes) => {
         order: [["id", "ASC"]],
       });
     }
+
     static async remove(id) {
       return this.destroy({
         where: {
@@ -71,6 +73,7 @@ module.exports = (sequelize, DataTypes) => {
         },
       });
     }
+
     setCompletionStatus(bool) {
       return this.update({ completed: bool });
     }
@@ -85,7 +88,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: "Todo",
-    }
+    },
   );
   return Todo;
 };
