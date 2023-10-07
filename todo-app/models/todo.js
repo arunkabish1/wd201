@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     deletetodo() {
-      return this.removetask(id);
+      return this.update({ completed: true });
     }
 
     static getTodos() {
