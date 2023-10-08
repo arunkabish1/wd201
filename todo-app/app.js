@@ -68,7 +68,7 @@ app.post("/todos", async function (req, res) {
     });
     return res.redirect("/");
   } catch (err) {
-    return res.status(422).json(err);
+    return res.status(422).json({ error: err.message });
   }
 });
 
