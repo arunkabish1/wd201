@@ -4,6 +4,9 @@ module.exports = (sequelize, DataTypes) => {
   class Todo extends Model {
     static associate(models) { }
     static addTodo({ title, dueDate }) {
+      if (!title || !dueDate) {
+        throw new Error("Title and dueDate required");
+      }
       return this.create({ 
           title: title,
           dueDate: dueDate,
@@ -73,14 +76,20 @@ module.exports = (sequelize, DataTypes) => {
 
   Todo.init(
     {
-      title: DataTypes.STRING,
-      dueDate: DataTypes.DATEONLY,
-      completed: DataTypes.BOOLEAN,
-    },
+      title: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {notEmpty: true,},
+      },
+      dueDate: {
+        type: DataTypes.DATEONLY,
+        allowNull: false,
+      },
+      completed: DataTypes.BOOLEAN,},
     {
       sequelize,
       modelName: "Todo",
-    },
+    }
   );
   return Todo;
 };

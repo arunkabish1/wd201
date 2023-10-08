@@ -49,7 +49,7 @@ describe("l9 test suite", function () {
     });
     test("item with no empty date", async () => {
       const res = await agent.post("/todos").send({
-        title: "emptydate",
+        title: "Empty Date",
         dueDate: "",
         completed: false,
       });
