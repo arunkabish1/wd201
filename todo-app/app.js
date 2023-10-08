@@ -62,10 +62,16 @@ app.get("/todos", async function (req, res) {
 
 app.post("/todos", async function (req, res) {
   try {
+    const trimmedTitle = req.body.title.trim();
+     if (trimmedTitle.length === 0) {
+      throw new Error("Title cannot be empty.");
+    }
+
     await Todo.addTodo({
-      title: req.body.title,
+      title: trimmedTitle,
       dueDate: req.body.dueDate,
     });
+
     return res.redirect("/");
   } catch (err) {
     return res.status(422).json({ error: err.message });
