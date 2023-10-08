@@ -47,7 +47,14 @@ describe("l9 test suite", function () {
       completed: false,
       _csrf: csrfToken,
     });
-
+    test("item with no empty date", async () => {
+      const res = await agent.post("/todos").send({
+        title: "emptydate",
+        dueDate: "",
+        completed: false,
+      });
+      expect(res.status).toBe(400);
+    });
     const groupedTodosResponse = await agent.get("/").set("Accept", "application/json");
     const parsedGroupedResponse = JSON.parse(groupedTodosResponse.text);
     const dueTodayCount = parsedGroupedResponse.dueToday.length;
