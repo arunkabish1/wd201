@@ -10,42 +10,44 @@
     <link href="./css/styles.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-      var token = document
-        .querySelector('meta[name="csrf-token"]')
-        .getAttribute("content");
-      function updateTodo(id) {
-        var boolean = document.querySelector(`#todo-checkbox-${id}`).checked;
-        fetch(`/todos/${id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            completed: boolean,
-            _csrf: token,
-          }),
-        })
-          .then((res) => {
-            if (res.ok) {
-              window.location.reload();
-            }
+      var token = document.querySelector("meta[name='csrf-token']").getAttribute("content");
+      const updateTodo = (id) => {
+          const bool = document.querySelector(`#checkbox-${id}`).checked; 
+          console.log(bool);
+          fetch(`/todos/${id}`, {
+              method: "PUT",
+              headers: {
+                  "Content-Type": "application/json",
+              },
+              body : JSON.stringify({
+                  _csrf : token,
+                  completed : bool
+              })
           })
-          .catch((err) => console.error(err));
-      }
+          .then((res) => {
+              if (res.ok) {
+                  window.location.reload();
+              }
+          })
+          .catch((error) => {
+              console.log(error);
+          });
+      };
       function deleteTodo(id) {
-        fetch(`/todos/${id}`, {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            _csrf: token,
-          }),
-        })
-          .then((res) => {
-            if (res.ok) {
-              window.location.reload();
-            }
+          fetch(`/todos/${id}`, {
+              method: "delete",
+              headers: { "Content-type": "application/json"},
+              body: JSON.stringify({
+                  "_csrf":token
+              })
           })
-          .catch((err) => console.log(err));
+          .then((res) => {
+              if(res.ok) {
+                  window.location.reload()
+              }
+          }).catch((err) => console.err(err))
       }
-    </script>
+  </script>
 </head>
 <body>
    <div class= "grid  grid-cols-6">
@@ -65,10 +67,11 @@
         </div>  
         </div>
     </form>
-    <%- include('todos.ejs', {title: "Overdue", data: overdue}) %>
-    <%- include('todos.ejs', {title: "Due Today", data: dueToday}) %>
-    <%- include('todos.ejs', {title: "Due Later", data: dueLater}) %>
-    <%- include('todos.ejs', {title: "Completed Items", data: completedItems}) %>
+    <%- include('todos.ejs', { title: "OverDue", data: overDue, ID:"count-overdue" }) %>
+    <%- include('todos.ejs', { title: "Due Today", data: due_Today, ID:"count-due-today" }) %>
+    <%- include('todos.ejs', { title: "Due Later", data: due_Later, ID:"count-due-later" }) %>
+    <%- include('todos.ejs', { title: "Completed Items", data: completed_items, ID:"count-completed" }) %>
+
 </div>
 </div>
 </body>
