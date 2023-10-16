@@ -89,6 +89,7 @@ module.exports = (sequelize, DataTypes) => {
         validate: {
           notEmpty: {
             notNull:true,
+            len: 5,
             msg: "Title cannot empty.",
           },
         },
