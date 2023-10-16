@@ -50,8 +50,8 @@ passport.use(new LocalStrategy({
 
 }));
 
-app.use(function(request, response, next) {
-  response.locals.messages = request.flash();
+app.use(function(req, res, next) {
+  res.locals.messages = req.flash();
   next();
 });
 
@@ -150,10 +150,10 @@ app.get("/signup", (req, res) => {
   res.render("signup", { title: "Signup", csrfToken: req.csrfToken() });
 });
 
-app.put("/todos/:id", async function (request, res) {
-  const todo = await Todo.findByPk(request.params.id);
+app.put("/todos/:id", async function (req, res) {
+  const todo = await Todo.findByPk(req.params.id);
   try {
-    const updatingTodos = await todo.setCompletionStatus(request.body.completed);
+    const updatingTodos = await todo.setCompletionStatus(req.body.completed);
     return res.json(updatingTodos);
   } catch (err) {
     console.log(err);
@@ -161,24 +161,37 @@ app.put("/todos/:id", async function (request, res) {
   }
 });
 
-app.get("/login", (request, response) => {
-  response.render("login", { title: "Login", csrfToken: request.csrfToken() });
+app.get("/login", (req, res) => {
+  res.render("login", { title: "Login", csrfToken: req.csrfToken() });
 });
 
 app.post("/session", passport.authenticate("local", { failureRedirect: "/login",failureFlash: true, }), function (req, res) {
   console.log(req.user);
   res.redirect("/todos");
 });
-app.get("/signout", (request, response, next) => {
-  request.logout((err) => {
+app.get("/signout", (req, res, next) => {
+  req.logout((err) => {
     if (err) {
       return next(err);
     }
-    response.redirect("/");
+    res.redirect("/");
   });
 });
 
 app.post("/users", async (req, res) => {
+  if (req.body.email.length == 0) {
+    req.flash("error", "Email can not be empty!");
+    return res.redirect("/signup");
+  }
+
+  if (req.body.firstName.length == 0) {
+    req.flash("error", "Firstname must be filled :(");
+    return res.redirect("/signup");
+  }
+  if (req.body.password.length <= 8) {
+    req.flash("error", "password is not strong :( ");
+    return res.redirect("/signup");
+  }
   const hashedPwd = await bcrypt.hash(req.body.password, saltRounds);
   console.log(hashedPwd);
 
@@ -187,23 +200,16 @@ app.post("/users", async (req, res) => {
       firstname: req.body.firstname,
       lastname: req.body.lastname,
       email: req.body.email,
-      password: hashedPwd, // Store the hashed password
+      password: hashedPwd,
     });
-
     req.login(user, (err) => {
       if (err) {
         console.log(err);
       }
-      res.redirect("/todos");
+      res.redirect("/todo");
     });
   } catch (err) {
-    if (err.name === 'SequelizeValidationError') {
-      const validationErrors = err.errors.map((error) => error.message);
-      req.flash('error', validationErrors);
-      res.redirect('/signup'); 
-    } else {
-      console.log(err);
-    }
+    console.log(err);
   }
 });
 
