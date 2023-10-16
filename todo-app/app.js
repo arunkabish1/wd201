@@ -10,14 +10,18 @@ const passport = require("passport");
 const connectEnsureLogin = require("connect-ensure-login");
 const LocalStrategy = require("passport-local");
 const bcrypt = require('bcrypt');
+const flash = require("connect-flash");
 
 const saltRounds = 10;
+
+app.use(flash());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser("shh! some secret string"));
 app.use(csrf("this_should_be_32_character_long", ["POST", "PUT", "DELETE"]));
 app.use(express.static(path.join(__dirname, "/public")));
+app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
 app.use(session({
@@ -35,15 +39,23 @@ passport.use(new LocalStrategy({
   passwordField: 'password'
 }, (username, password, done) => {
   User.findOne({ where: { email: username } })
-    .then(async function(user) {
-      const result = await bcrypt.compare(password, user.password);
-      if (result) {
-        return done(null, user);
-      } else {
-        return done("Invalid password");
-      }
-    });
+  .then(async function (user) {
+    const result = await bcrypt.compare(password, user.password);
+    if (result) {
+      return done(null, user);
+    } else {
+      return done(null, false, { message: "Invalid password" });
+    }
+  })
+  .catch((error) => {
+    return done(err);
+  });
 }));
+
+app.use(function(request, response, next) {
+  response.locals.messages = request.flash();
+  next();
+});
 
 passport.serializeUser((user, done) => {
   console.log("Serializing user in session", user.id);
@@ -155,7 +167,7 @@ app.get("/login", (request, response) => {
   response.render("login", { title: "Login", csrfToken: request.csrfToken() });
 });
 
-app.post("/session", passport.authenticate("local", { failureRedirect: "/login" }), function (req, res) {
+app.post("/session", passport.authenticate("local", { failureRedirect: "/login",failureFlash: true, }), function (req, res) {
   console.log(req.user);
   res.redirect("/todos");
 });
@@ -187,7 +199,13 @@ app.post("/users", async (req, res) => {
       res.redirect("/todos");
     });
   } catch (err) {
-    console.log(err);
+    if (err.name === 'SequelizeValidationError') {
+      const validationErrors = err.errors.map((error) => error.message);
+      req.flash('error', validationErrors);
+      res.redirect('/signup'); 
+    } else {
+      console.log(err);
+    }
   }
 });
 
@@ -201,5 +219,7 @@ app.delete("/todos/:id", async (req, res) => {
     return res.status(422).json(err);
   }
 });
+
+
 
 module.exports = app;

@@ -2,25 +2,38 @@
 const {
   Model
 } = require('sequelize');
-// const { FOREIGNKEYS } = require('sequelize/types/query-types');
+
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      // define association here
       User.hasMany(models.Todo, {
         foreignKey: 'userId'
-      })
+      });
     }
   }
   User.init({
-    firstname: DataTypes.STRING,
-    lastname: DataTypes.STRING,
-    email: DataTypes.STRING,
+    firstName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: 'First name is required.'
+        }
+      }
+    },
+    lastName: DataTypes.STRING,
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: 'Email address is required.'
+        },
+        isEmail: {
+          msg: 'Invalid email address format.'
+        }
+      },
+    },
     password: DataTypes.STRING
   }, {
     sequelize,
