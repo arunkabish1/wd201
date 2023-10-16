@@ -2,12 +2,17 @@
 const { Model, Op } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Todo extends Model {
-    static associate(models) { }
-    static addTodo({ title, dueDate }) {
+    static associate(models) {
+      Todo.belongsTo(models.User,{
+        foreignKey:'userId'
+      })
+     }
+    static addTodo({ title, dueDate,userId }) {
       return this.create({ 
           title: title,
           dueDate: dueDate,
-          completed: false });
+          completed: false,
+        userId });
     }
     static getTodos() {
       return this.findAll();
@@ -17,12 +22,13 @@ module.exports = (sequelize, DataTypes) => {
       return this.update({ completed: true });
     }
     
-    static dueToday() {
+    static dueToday(userId) {
       return this.findAll({
         where: {
           dueDate: {
             [Op.eq]: new Date().toLocaleDateString("en-CA"),
           },
+          userId,
           completed: false,
         },
         order: [["id", "ASC"]],
@@ -31,39 +37,43 @@ module.exports = (sequelize, DataTypes) => {
     markAsCompleted() {
       return this.update({ completed: true });
     }
-    static overdue() {
+    static overdue(userId) {
       return this.findAll({
         where: {
           dueDate: {
             [Op.lt]: new Date().toLocaleDateString("en-CA"),
           },
+          userId,
           completed: false,
         },
         order: [["id", "ASC"]],
       });
     }    
-    static completed() {
+    static completed(userId) {
       return this.findAll({
         where: {
           completed: true,
+          userId
         },
         order: [["id", "ASC"]],
       });
     }
-    static async remove(id) {
+    static async remove(id, userId ) {
       return this.destroy({
         where: { id },
+        userId
       });
     }
     setCompletionStatus(boolean) {
       return this.update({ completed: boolean });
     }
-    static dueLater() {
+    static dueLater(userId) {
       return this.findAll({
         where: {
           dueDate: {
             [Op.gt]: new Date().toLocaleDateString("en-CA"),
           },
+          userId,
           completed: false,
         },
         order: [["id", "ASC"]],
