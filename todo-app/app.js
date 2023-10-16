@@ -47,9 +47,7 @@ passport.use(new LocalStrategy({
       return done(null, false, { message: "Invalid password" });
     }
   })
-  .catch((error) => {
-    return done(err);
-  });
+
 }));
 
 app.use(function(request, response, next) {
@@ -186,8 +184,8 @@ app.post("/users", async (req, res) => {
 
   try {
     const user = await User.create({
-      firstName: req.body.firstName,
-      lastName: req.body.lname,
+      firstname: req.body.firstname,
+      lastname: req.body.lastname,
       email: req.body.email,
       password: hashedPwd, // Store the hashed password
     });
