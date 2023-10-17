@@ -169,7 +169,7 @@ app.post("/signup", async (req, res) => {
       return res.redirect("/signup");
     }
     req.flash("success", "User signed up successfully");
-    return res.redirect("/dashboard");
+    return res.redirect("/todos");
   } catch (error) {
     console.error(error);
     req.flash("error", "An error occurred");
@@ -203,7 +203,7 @@ app.post("/login", async (req, res) => {
       return res.redirect("/login");
     }
   req.flash("success", "Logged in successfully");
-    return res.redirect("/dashboard");
+    return res.redirect("/todos");
   } catch (error) {
     console.error(error);
     req.flash("error", "An error occurred");
