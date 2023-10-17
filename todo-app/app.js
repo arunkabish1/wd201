@@ -184,7 +184,7 @@ app.post("/users", async (req, res) => {
     return res.redirect("/signup");
   }
 
-  if (req.body.firstName.length == 0) {
+  if (req.body.firstname.length == 0) {
     req.flash("error", "Firstname must be filled :(");
     return res.redirect("/signup");
   }
@@ -206,7 +206,7 @@ app.post("/users", async (req, res) => {
       if (err) {
         console.log(err);
       }
-      res.redirect("/todo");
+      res.redirect("/todos");
     });
   } catch (err) {
     console.log(err);

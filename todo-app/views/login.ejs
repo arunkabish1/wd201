@@ -13,6 +13,7 @@
 </head>
 <body class="bg-gray-200 p-8">
     <%- include("header.ejs") %> 
+    <h5>Login to your account </h5>
     <h2 style="text-align: center" class="text-2xl font-semibold mb-4">Sign In</h2>
     <form action="/session" method="post" class="bg-white p-4 shadow-md rounded-md w-1/2 mx-auto">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
@@ -37,7 +38,7 @@
         </div>
 
         <div class="text-center">
-            <button type="submit" value="Login in" hover:bg-green-200 class="bg-blue-500 text-white py-2 px-4 rounded-md cursor-pointer">Sign In</button>
+            <button type="submit" value="Login" hover:bg-green-200 class="bg-blue-500 text-white py-2 px-4 rounded-md cursor-pointer">login</button>
         </div>
     </form>
     <% if(messages && messages.error && messages.error.length > 0)  { %>

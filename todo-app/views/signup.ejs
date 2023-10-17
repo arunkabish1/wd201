@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Sign Up</title>
     <meta name="csrf-token" content="<%= csrfToken %>">
     <link rel="icon" type="image/x-icon" href="/images/icons8-to-do-list-16.ico">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -17,12 +16,12 @@
     <form action="/users" method="post" class="bg-white p-4 shadow-md rounded-md w-1/2 mx-auto">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <div class="mb-4">
-            <label for="fname" class="block text-gray-600">First Name:</label>
+            <label for="firstname" class="block text-gray-600">First Name:</label>
             <input type="text" id="firstname" name="firstname" required class="w-full border p-2 rounded-md">
         </div>
 
         <div class="mb-4">
-            <label for="lname" class="block text-gray-600">Last Name:</label>
+            <label for="lastname" class="block text-gray-600">Last Name:</label>
             <input type="text" id="lastname" name="lastname" required class="w-full border p-2 rounded-md">
         </div>
 
