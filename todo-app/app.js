@@ -239,7 +239,7 @@ app.post("/users", async (req, res) => {
     return res.redirect("/signup");
   }
 
-  if (req.body.firstname.length == 0) {
+  if (req.body.firstName.length == 0) {
     req.flash("error", "Firstname must be filled :(");
     return res.redirect("/signup");
   }
@@ -252,8 +252,8 @@ app.post("/users", async (req, res) => {
 
   try {
     const user = await User.create({
-      firstname: req.body.firstname,
-      lastname: req.body.lastname,
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
       email: req.body.email,
       password: hashedPwd,
     });
