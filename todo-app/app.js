@@ -44,12 +44,12 @@ passport.use(new LocalStrategy({
     if (result) {
       return done(null, user);
     } else {
-      return done(null, false, { message: "Invalid password" });
+      return done(null, false, { message: "Invalid given password" });
     }
   })
   .catch(() => {
     return done(null, false, {
-      message: "Invalid ",
+      message: "Invalid registered email",
     });
 });
 }));
@@ -74,16 +74,23 @@ passport.deserializeUser((id, done) => {
     });
 });
 
-app.get("/", async (req, res) => {
-  res.render("index", {
-    title: "Todo application",
-    csrfToken: req.csrfToken(),
-  });
+app.get('/', async (req, res)=>{
+  if(req.user)
+  {
+    res.redirect('/todos');
+  }
+  else{
+    res.render('index', {
+      title: 'Todo Application',
+      csrfToken: req.csrfToken(),
+    });
+  }
 });
 
+
 app.get("/todos", connectEnsureLogin.ensureLoggedIn(), async (req, res) => {
-  const allItems = await Todo.getTodos();
   const loggedInUser = req.user.id;
+  const allItems = await Todo.getTodos();
   const overDue = await Todo.overdue(loggedInUser);
   const due_Later = await Todo.dueLater(loggedInUser);
   const due_Today = await Todo.dueToday(loggedInUser);
@@ -97,6 +104,7 @@ app.get("/todos", connectEnsureLogin.ensureLoggedIn(), async (req, res) => {
       due_Later,
       due_Today,
       completed_items,
+      user: req.user,
       csrfToken: req.csrfToken(),
     });
   } else {
@@ -145,6 +153,7 @@ app.post("/todos", connectEnsureLogin.ensureLoggedIn(), async function (req, res
       dueDate: req.body.dueDate,
       userId: req.user.id,
     });
+    req.flash("success", "Todo Item added successfully");
     return res.redirect('/todos');
   } catch (error) {
     console.log(error);
@@ -251,14 +260,17 @@ app.post("/users", async (req, res) => {
     req.login(user, (err) => {
       if (err) {
         console.log(err);
+        res.redirect("/")
+        req.flash
       }
+    req.flash("success", "User created successfully");
      return res.redirect("/todos");
       
-     
-     
     });
   } catch (err) {
     console.log(err);
+    req.flash("error", err.errors[0].message);
+    res.redirect("/signup");
   }
 });
 

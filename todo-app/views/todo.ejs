@@ -58,7 +58,7 @@
       <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <div class="flex gap-2 py-4">
             <div class="flex-auto">
-                <input type="text" name="title" placeholder="what's next..?" class="border border-purple-300 rounded text-gray-900 w-full p-2 text-sm" required   pattern="^(?!\s+$).{2,}$" />
+                <input type="text" name="title" placeholder="what's next..?" class="border border-purple-300 rounded text-gray-900 w-full p-2 text-sm" required />
             </div>
         <div class="flex-auto">
             <input type="date" name="dueDate" class="border border-gray-300 rounded text-gray-900 w-full p-2 text-sm leading-4 " required/>
@@ -77,8 +77,8 @@
     <div>
         <% if (messages.success) { %>
           <div class="alert alert-success">
-            <%= messages.success %>
-          </div>
+            <p class="rounded-full border-2 p-2 bg-gray-600 text-center text-white"><%= messages.success %></p>
+         </div>
         <% } %>
         
         </div>
