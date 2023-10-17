@@ -72,8 +72,18 @@
     <%- include('todos.ejs', { title: "Due Today", data: due_Today, ID:"count-due-today" }) %>
     <%- include('todos.ejs', { title: "Due Later", data: due_Later, ID:"count-due-later" }) %>
     <%- include('todos.ejs', { title: "Completed Items", data: completed_items, ID:"count-completed" }) %>
-
+    <hr>
+    <br>
+    <div>
+        <% if (messages.success) { %>
+          <div class="alert alert-success">
+            <%= messages.success %>
+          </div>
+        <% } %>
+        
+        </div>
 </div>
+
 </div>
 </body>
 </html>

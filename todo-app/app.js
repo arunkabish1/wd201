@@ -126,12 +126,18 @@ app.get("/todos", async function (req, res) {
   }
 });
 
-app.post("/todos",connectEnsureLogin.ensureLoggedIn(), async function (req, res) {
+app.post("/todos", connectEnsureLogin.ensureLoggedIn(), async function (req, res) {
   console.log(req.user);
   try {
     const trimmedTitle = req.body.title.trim();
-     if (trimmedTitle.length === 0) {
-      throw new Error("Title cannot be empty.");
+    if (trimmedTitle.length === 0) {
+      req.flash("error", "Title cannot be empty");
+      return res.redirect("/create-todo");
+    }
+
+    if (!req.body.dueDate) {
+      req.flash("error", "Due date cannot be empty");
+      return res.redirect("/create-todo");
     }
 
     await Todo.addTodo({
@@ -140,9 +146,27 @@ app.post("/todos",connectEnsureLogin.ensureLoggedIn(), async function (req, res)
       userId: req.user.id
     });
 
+    req.flash("success", "Todo added successfully");
     return res.redirect("/todos");
   } catch (err) {
-    return res.status(422).json({ error: err.message });
+    req.flash("error", "An error occurred");
+    return res.redirect("/create-todo");
+  }
+});
+app.post("/signup", async (req, res) => {
+  try {
+    const { firstname, email } = req.body;
+    const user = await User.build({ firstname, lastname, email });
+    await user.validate();
+   req.flash("success", "User signed up successfully");
+    return res.redirect("/todos");
+  } catch (error) {
+    if (error instanceof Sequelize.ValidationError) {
+      return res.redirect("/signup");
+    }
+    console.error(error);
+    req.flash("error", "An error occurred");
+    res.redirect("/signup");
   }
 });
 
@@ -164,11 +188,18 @@ app.put("/todos/:id", async function (req, res) {
 app.get("/login", (req, res) => {
   res.render("login", { title: "Login", csrfToken: req.csrfToken() });
 });
+app.post(
+  "/session",
+  passport.authenticate("local", {
+    failureRedirect: "/login",
+    failureFlash: true,
+  }),
+  (request, response) => {
+    console.log(request.user);
+    response.redirect("/todos");
+  },
+);
 
-app.post("/session", passport.authenticate("local", { failureRedirect: "/login",failureFlash: true, }), function (req, res) {
-  console.log(req.user);
-  res.redirect("/todos");
-});
 app.get("/signout", (req, res, next) => {
   req.logout((err) => {
     if (err) {
@@ -206,7 +237,10 @@ app.post("/users", async (req, res) => {
       if (err) {
         console.log(err);
       }
-      res.redirect("/todos");
+     return res.redirect("/todos");
+      
+     
+     
     });
   } catch (err) {
     console.log(err);
@@ -217,7 +251,9 @@ app.delete("/todos/:id", async (req, res) => {
   console.log("deleting with ID:", req.params.id);
   try {
     await Todo.remove(req.params.id);
+    req.flash("success", "Todo deleted successfully");
     return res.json({ success: true });
+    
   } 
   catch (err) {
     return res.status(422).json(err);
