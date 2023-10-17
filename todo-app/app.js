@@ -49,7 +49,7 @@ passport.use(new LocalStrategy({
   })
   .catch(() => {
     return done(null, false, {
-      message: "Invalid email",
+      message: "Invalid ",
     });
 });
 }));
@@ -131,32 +131,27 @@ app.get("/todos", async function (req, res) {
 });
 
 app.post("/todos", connectEnsureLogin.ensureLoggedIn(), async function (req, res) {
-  console.log(req.user);
+  if (!req.body.title) {
+    req.flash("error", "Empty title not allowed");
+    res.redirect("/todos");
+  }
+  if (!req.body.dueDate) {
+    req.flash("error", "Blank dueDate not allowed");
+    res.redirect("/todos");
+  }
   try {
-    const trimmedTitle = req.body.title.trim();
-    if (trimmedTitle.length === 0) {
-      req.flash("error", "Title cannot be empty");
-      return res.redirect("/create-todo");
-    }
-
-    if (!req.body.dueDate) {
-      req.flash("error", "Due date cannot be empty");
-      return res.redirect("/create-todo");
-    }
-
-    await Todo.addTodo({
-      title: trimmedTitle,
+    const todo = await Todo.addTodo({
+      title: req.body.title, 
       dueDate: req.body.dueDate,
-      userId: req.user.id
+      userId: req.user.id,
     });
-
-    req.flash("success", "Todo added successfully");
-    return res.redirect("/todos");
-  } catch (err) {
-    req.flash("error", "An error occurred");
-    return res.redirect("/create-todo");
+    return res.redirect('/todos');
+  } catch (error) {
+    console.log(error);
+    return res.status(422).json(error);
   }
 });
+
 app.post("/signup", async (req, res) => {
   try {
     const { firstName, email, password } = req.body;
@@ -209,8 +204,7 @@ app.post("/login", async (req, res) => {
 app.get("/login", (req, res) => {
   res.render("login", { title: "Login", csrfToken: req.csrfToken() });
 });
-app.post(
-  "/session",
+app.post("/session",
   passport.authenticate("local", {
     failureRedirect: "/login",
     failureFlash: true,
@@ -270,16 +264,17 @@ app.post("/users", async (req, res) => {
 
 app.delete("/todos/:id", async (req, res) => {
   console.log("deleting with ID:", req.params.id);
-  try {
-    await Todo.remove(req.params.id);
+  const deleteFlag = await Todo.destroy({where: {id: req.params.id, userId:req.user.id,}});
+  if(deleteFlag ===0)
+  {
+    return res.send(false);
+  }
+  else{
     req.flash("success", "Todo deleted successfully");
-    return res.json({ success: true });
-    
-  } 
-  catch (err) {
-    return res.status(422).json(err);
+    res.send(true);
   }
 });
+
 
 
 
