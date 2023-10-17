@@ -13,13 +13,12 @@
 </head>
 <body class="bg-gray-200 p-8">
     <%- include("header.ejs") %> 
-    <h2 style="text-align: center" class="text-2xl font-semibold mb-4">Sign In</h2>
-   
-    
-    <form action="/session" method="post" class="bg-white p-4 shadow-md rounded-md w-1/2 mx-auto">
+   <br>
+    <form action="/session" method="post" autocomplete="on" class="bg-white p-4 shadow-md rounded-md w-1/2 mx-auto">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-        <h2><b>Login to your account </b></h2>
-        <br><hr><br>
+        <h2 class="py-2 text-center text-lg mb-2"><b>Login to your account </b></h2>
+        <h4> <p class="py-2 text-lg border-b-2 mb-2">Don't have an account? <a href="/signup" class="text-gray-600 font-bold hover:text-green-500 ">Create one</a></h4>
+        
         <!-- <div class="mb-4">
             <label for="fname" class="block text-gray-600">First Name:</label>
             <input type="text" id="firstName" name="firstName" required class="w-full border p-2 rounded-md">
@@ -43,11 +42,20 @@
         <div class="text-center">
             <button type="submit" value="Login"hover:bg-green-500 class="bg-blue-500 text-white py-2 px-4 rounded-md cursor-pointer">login</button>
         </div>
-    </form>
-    <% if(messages && messages.error && messages.error.length > 0)  { %>
-        <% for(var i=0; i<messages.error.length; i++) { %>
-                <li> <%= messages.error[i] %></li>
-        <% } %>
-      <% } %>
+        <br><hr><br>
+        <div class="text-center" >
+            <% if(messages && messages.error && messages.error.length > 0)  { %>
+                <% for(var i=0; i<messages.error.length; i++) { %>
+                    <p class="text-purple text-500" style="text-align: center">! <%= messages.error[i] %>
+                <% } %>
+              <% } %>
+        </div>
+    </form><br>
+    
+      <footer class="text-center p-5" >
+        <p><%- include ('footer.ejs') %></p>
+      </footer>
+    
+    
 </body>
 </html>

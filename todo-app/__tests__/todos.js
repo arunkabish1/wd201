@@ -50,6 +50,7 @@ describe("Todo test cases for l10", () => {
     expect(res.statusCode).toBe(200);
     res = await agent.get("/signout");
     expect(res.statusCode).toBe(302);
+    expect(res.header["location"]).toBe("/login");
     res = await agent.get("/todos");
     expect(res.statusCode).toBe(302);
   });

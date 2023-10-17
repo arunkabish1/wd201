@@ -47,7 +47,11 @@ passport.use(new LocalStrategy({
       return done(null, false, { message: "Invalid password" });
     }
   })
-
+  .catch(() => {
+    return done(null, false, {
+      message: "Invalid email",
+    });
+});
 }));
 
 app.use(function(req, res, next) {
@@ -155,21 +159,19 @@ app.post("/todos", connectEnsureLogin.ensureLoggedIn(), async function (req, res
 });
 app.post("/signup", async (req, res) => {
   try {
-    const { firstname, email } = req.body;
-    const user = await User.build({ firstname, lastname, email });
-    await user.validate();
-   req.flash("success", "User signed up successfully");
-    return res.redirect("/todos");
-  } catch (error) {
-    if (error instanceof Sequelize.ValidationError) {
+    const { firstName, email, password } = req.body;
+    if (!firstName || !email || !password) {
+      req.flash("error", "Please provide a valid firstName, email, and password");
       return res.redirect("/signup");
     }
+    req.flash("success", "User signed up successfully");
+    return res.redirect("/dashboard");
+  } catch (error) {
     console.error(error);
     req.flash("error", "An error occurred");
     res.redirect("/signup");
   }
 });
-
 app.get("/signup", (req, res) => {
   res.render("signup", { title: "Signup", csrfToken: req.csrfToken() });
 });
@@ -184,7 +186,26 @@ app.put("/todos/:id", async function (req, res) {
     return res.status(422).json(err);
   }
 });
-
+app.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      req.flash("error", "Please provide a valid email and password");
+      return res.redirect("/login");
+    }
+    const user = await User.findOne({ where: { email } });
+    if (!user || !user.isValidPassword(password)) {
+      req.flash("error", "Invalid email or password");
+      return res.redirect("/login");
+    }
+  req.flash("success", "Logged in successfully");
+    return res.redirect("/dashboard");
+  } catch (error) {
+    console.error(error);
+    req.flash("error", "An error occurred");
+    res.redirect("/login");
+  }
+});
 app.get("/login", (req, res) => {
   res.render("login", { title: "Login", csrfToken: req.csrfToken() });
 });
