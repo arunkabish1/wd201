@@ -14,7 +14,7 @@ const todoList = () => {
   };
 
   const dueToday = () => {
-    // new comment added
+    // due today should be completed
     return all.filter((item) => item.dueDate === fDate());
   };
 
