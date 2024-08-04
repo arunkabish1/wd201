@@ -9,7 +9,7 @@ const todoList = () => {
 
   const fDate = () => new Date().toLocaleDateString("en-CA");
   const overdue = () => {
-    // Write the date check condition here and return the array of overdue items accordingly.
+    
     return all.filter((item) => item.dueDate < fDate());
   };
 
